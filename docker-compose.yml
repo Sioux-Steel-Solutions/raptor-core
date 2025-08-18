@@ -1,0 +1,21 @@
+services:
+  mqtt:
+    image: eclipse-mosquitto
+    container_name: local-mqtt
+    restart: always
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+
+  raptor-core:
+    build: .
+    image: raptor-core:latest
+    container_name: raptor-core
+    restart: always
+    network_mode: host
+    depends_on:
+      - mqtt
+    environment:
+      - BROKER_URL=tcp://localhost:1883
+
