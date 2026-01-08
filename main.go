@@ -43,8 +43,8 @@ func env(k, def string) string {
 func main() {
 	site := env("RAPTOR_SITE", "shop")
 	device := env("RAPTOR_DEVICE", "revpi-135593")
-	mbAddr := env("MODBUS_ADDR", "10.0.106.100:502")
-	mqttURL := env("MQTT_URL", "tcp://10.0.106.22:1883")
+	mbAddr := env("MODBUS_ADDR", "10.0.106.22:502")
+	mqttURL := env("MQTT_URL", "tcp://10.0.106.26:1883")
 	mqUser := os.Getenv("MQTT_USER")
 	mqPass := os.Getenv("MQTT_PASS")
 
