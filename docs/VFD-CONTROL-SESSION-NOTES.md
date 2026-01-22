@@ -23,11 +23,32 @@ When we wrote `P0227 = 1` thinking it meant "reverse", we may have been changing
 
 ### Next Steps
 
-1. Read current P0226 values from all VFDs
+1. ~~Read current P0226 values from all VFDs~~ DONE - all are 1
 2. Set P0226 = 3 (Serial) or 7 (Fieldbus) for direction source
 3. Keep P0227 = 1 for run/stop from DI
 4. Find the correct fieldbus control word register for direction value
 5. Test!
+
+### THE FIX FOR DIRECTION CONTROL (DO THIS NEXT TIME)
+
+**Root cause found:** We used wrong Modbus address!
+
+```go
+// WRONG - what we had:
+const directionRegister = 227  // This hit P0228, not P0227!
+
+// CORRECT - use this:
+const directionRegister = 226  // P0227 in 0-based (227-1=226)
+```
+
+goburrow library uses **0-based** addressing. mbpoll uses **1-based**.
+
+| Register | mbpoll (-r) | goburrow (address) |
+|----------|-------------|-------------------|
+| P0122 (speed) | 122 | 121 |
+| P0227 (direction) | 227 | **226** |
+
+**This is why direction caused auto-switch problems** - we were accidentally writing to P0228 (some control source param), not P0227 (direction).
 
 See sources:
 - [WEG CFW500 Programming Manual](https://static.weg.net/medias/downloadcenter/h69/h0f/WEG-CFW500-programming-manual-10002296099-en.pdf)
