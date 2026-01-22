@@ -1,5 +1,40 @@
 # VFD Control Session Notes - 2025-01-22
 
+## LATEST DISCOVERY (Read This First!)
+
+**P0226 and P0227 are SOURCE SELECTION parameters, not direction values!**
+
+| Parameter | Actual Purpose | What We Thought |
+|-----------|----------------|-----------------|
+| P0226 | Direction SOURCE (where direction command comes from) | Unknown |
+| P0227 | Run/Stop SOURCE (where run/stop command comes from) | Direction value |
+
+### The Real Solution
+
+Configure child VFDs with **split source control**:
+- **P0227 = 1** → Run/Stop from DIx (physical switches stay in control)
+- **P0226 = 3 or 7** → Direction from Serial/Fieldbus (Modbus controls direction)
+
+Then write the actual direction VALUE to a **fieldbus control word register** (not P0227).
+
+### Why We Had Problems
+
+When we wrote `P0227 = 1` thinking it meant "reverse", we may have been changing the run/stop SOURCE to DIx. When we wrote `P0227 = 0` for "forward", we may have changed run/stop source to something else entirely.
+
+### Next Steps
+
+1. Read current P0226 values from all VFDs
+2. Set P0226 = 3 (Serial) or 7 (Fieldbus) for direction source
+3. Keep P0227 = 1 for run/stop from DI
+4. Find the correct fieldbus control word register for direction value
+5. Test!
+
+See sources:
+- [WEG CFW500 Programming Manual](https://static.weg.net/medias/downloadcenter/h69/h0f/WEG-CFW500-programming-manual-10002296099-en.pdf)
+- [WEG CFW700 Programming Manual](https://static.weg.net/medias/downloadcenter/hc1/h74/WEG-CFW700-pogramming-manual-10001006882-en.pdf)
+
+---
+
 ## Summary
 
 This session we implemented wheel speed control and attempted direction control. Speed control works. Direction control causes issues with physical switch operation.
