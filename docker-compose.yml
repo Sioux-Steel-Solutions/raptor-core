@@ -5,7 +5,7 @@ services:
     restart: always
     ports:
       - "1883:1883"
-      - "9002:9002"
+      - "9001:9001"
     volumes:
       - ./mosquitto/config:/mosquitto/config
 
