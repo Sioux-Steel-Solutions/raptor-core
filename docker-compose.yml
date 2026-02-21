@@ -17,5 +17,5 @@ services:
     depends_on:
       - mqtt
     environment:
-      - BROKER_URL=tcp://localhost:1883
+      - MQTT_URL=tcp://192.168.1.154:1883
 
